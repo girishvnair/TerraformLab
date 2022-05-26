@@ -1,16 +1,16 @@
-terraform {
-  required_providers {
-    aws = {
-      source  = "hashicorp/aws"
-      version = "~> 3.0"
-    }
-  }
-}
-# Configure the AWS Provider
 provider "aws" {
-   region = "us-east-1"
+  region = var.region
+  shared_config_files      = ["C:\\Users\\Girish\\.aws\\config"]
+  shared_credentials_files = ["C:\\Users\\Girish\\.aws\\credentials"]
+  
 }
-resource "aws_instance" "example" {
-  ami           = "ami-2757f631"
+
+module "vpc" {
+  source = "./modules/vpc"
+}
+
+resource "aws_instance" "my-instance" {
+  ami           = module.vpc.ami_id
+  subnet_id     = module.vpc.subnet_id
   instance_type = "t2.micro"
 }
